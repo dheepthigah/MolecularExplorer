@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dheepthigah | Molecule Explorer</title>
+<style>
+:root {
+  --site-primary: #66B8FF;
+  --site-secondary: #10243D;
+  --site-background: #071426;
+  --site-on-primary: #071426;
+  --site-on-secondary: #F2F6FF;
+  --site-on-background: #F2F6FF;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: light-dark(#f7f8fb, #101217); color: light-dark(#20252b, #f2f4f7); }
+.app-root { min-height: 100vh; width: 100%; border-radius: 0; background-color: var(--site-background); color: var(--site-on-background); background-image:radial-gradient(ellipse at 12% 0%,rgba(35,105,170,.18),transparent 32%),radial-gradient(ellipse at 88% 22%,rgba(102,184,255,.10),transparent 28%); }
+a { color: var(--site-primary); }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.nav { display:flex; align-items:center; justify-content:space-between; padding: calc(18px * var(--site-spacing-scale)) calc(5vw * var(--site-spacing-scale)); border-bottom:1px solid color-mix(in srgb, var(--site-on-background) 14%, transparent); gap:16px; }
+.brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.03em; }
+.logo { width:42px; height:42px; display:grid; place-items:center; border-radius:14px; background:var(--site-primary); color:var(--site-on-primary); font-size:22px; }
+.nav small { display:block; color:var(--site-on-background); opacity:.68; font-weight:500; letter-spacing:0; }
+.nav-right { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.pill { padding:8px 12px; border:1px solid color-mix(in srgb, var(--site-on-background) 20%, transparent); border-radius:999px; font-size:12px; }
+main { max-width:1160px; margin:0 auto; padding:clamp(22px,4vw,52px); }
+.hero { display:grid; grid-template-columns:1.25fr .75fr; gap:32px; align-items:center; padding:clamp(20px,4vw,48px) 0 34px; }
+.eyebrow { text-transform:uppercase; letter-spacing:.16em; font-size:11px; font-weight:800; color:var(--site-primary); }
+h1 { font-size:calc(clamp(38px,6vw,68px) * var(--site-heading-scale)); line-height:1.02; letter-spacing:-.055em; margin:14px 0 18px; }
+h2 { font-size:calc(26px * var(--site-heading-scale)); letter-spacing:-.035em; margin:0 0 16px; }
+h3 { margin:0 0 8px; font-size:17px; }
+p { line-height:1.65; }
+.lead { font-size:clamp(16px,2vw,19px); opacity:.8; max-width:680px; }
+.btn { box-shadow:0 8px 22px rgba(102,184,255,.18); transition:transform .18s ease,box-shadow .18s ease; border:0; border-radius:12px; padding:12px 17px; background:var(--site-primary); color:var(--site-on-primary); font-weight:750; }
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(102,184,255,.24)} .btn.secondary { background:transparent; color:var(--site-on-background); border:1px solid color-mix(in srgb, var(--site-on-background) 25%, transparent); }
+.hero-art { min-height:280px; border-radius:28px; background:var(--site-secondary); display:grid; place-items:center; position:relative; overflow:hidden; border:1px solid color-mix(in srgb, var(--site-on-background) 12%, transparent); }
+.hero-art svg { width:100%; max-width:390px; opacity:var(--site-decoration-opacity); }
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:12px 0 42px; }
+.stat, .card { box-shadow:0 10px 32px rgba(0,0,0,.12); backdrop-filter:blur(8px); background:var(--site-secondary); border:1px solid color-mix(in srgb, var(--site-on-background) 12%, transparent); border-radius:calc(18px * var(--site-radius-scale)); padding:calc(20px * var(--site-spacing-scale)); }
+.stat strong { display:block; font-size:27px; letter-spacing:-.04em; }
+.stat span, .muted { opacity:.68; font-size:13px; }
+.section { margin:48px 0; }
+.cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.mol-card { cursor:pointer; transition:transform .18s ease, border-color .18s ease; }
+.mol-card:hover { transform:translateY(-3px); border-color:var(--site-primary); }
+.mol-symbol { height:100px; display:grid; place-items:center; margin-bottom:12px; border-radius:13px; background:color-mix(in srgb, var(--site-primary) 9%, transparent); }
+.mol-symbol svg { width:115px; height:85px; }
+.mol-card p { font-size:13px; opacity:.72; min-height:64px; }
+.formula { font-family:ui-monospace,monospace; font-size:13px; padding:5px 8px; display:inline-block; border-radius:7px; background:color-mix(in srgb, var(--site-primary) 12%, transparent); }
+.workspace { display:grid; grid-template-columns:.8fr 1.2fr; gap:18px; }
+label { display:block; font-weight:700; font-size:13px; margin:14px 0 7px; }
+input, select { width:100%; border:1px solid color-mix(in srgb, var(--site-on-background) 22%, transparent); background:var(--site-background); color:var(--site-on-background); border-radius:10px; padding:12px; }
+.row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.status { margin-top:10px; font-size:13px; }
+.status.ok { color:#35a66c; } .status.bad { color:#d94b4b; }
+.structure { min-height:260px; display:grid; place-items:center; background:color-mix(in srgb, var(--site-primary) 6%, transparent); border-radius:14px; overflow:hidden; }
+.structure svg { width:100%; max-width:420px; }
+.prop-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+.prop { padding:14px; border-radius:12px; background:color-mix(in srgb, var(--site-on-background) 5%, transparent); }
+.prop small { display:block; opacity:.65; font-size:11px; margin-bottom:7px; }
+.prop strong { font-size:19px; }
+.bar-chart { display:flex; flex-direction:column; gap:14px; }
+.bar-row { display:grid; grid-template-columns:100px 1fr 55px; gap:12px; align-items:center; font-size:13px; }
+.track { height:12px; background:color-mix(in srgb, var(--site-on-background) 10%, transparent); border-radius:99px; overflow:hidden; }
+.fill { height:100%; background:var(--site-primary); border-radius:99px; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th,td { padding:12px 10px; text-align:left; border-bottom:1px solid color-mix(in srgb, var(--site-on-background) 12%, transparent); }
+th { opacity:.7; font-size:11px; text-transform:uppercase; letter-spacing:.07em; }
+.report-fields { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+footer { border-top:1px solid color-mix(in srgb, var(--site-on-background) 14%, transparent); padding:25px 5vw; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:12px; opacity:.72; }
+.watermark { position:fixed; right:18px; bottom:10px; opacity:.32; font-size:10px; letter-spacing:.16em; pointer-events:none; z-index:5; }
+.note { border-left:3px solid var(--site-primary); padding:12px 15px; background:color-mix(in srgb, var(--site-primary) 8%, transparent); border-radius:0 10px 10px 0; font-size:13px; line-height:1.6; }
+.hidden { display:none !important; }
+@media(max-width:850px) { .hero,.workspace { grid-template-columns:1fr; } .cards { grid-template-columns:repeat(2,1fr); } .stat-row { grid-template-columns:repeat(2,1fr); } .hero-art { min-height:220px; } }
+@media(max-width:500px) { .cards { grid-template-columns:1fr; } .prop-grid { grid-template-columns:repeat(2,1fr); } .report-fields { grid-template-columns:1fr; } .nav { align-items:flex-start; } }
+@media print { .nav,.btn,.watermark,footer { display:none!important; } body,.app-root { background:white!important; color:#111!important; } .card,.stat { background:white!important; border:1px solid #ddd!important; } }
+
+#threeDSection .viewer-shell{position:relative;overflow:hidden;border-radius:22px;border:1px solid rgba(102,184,255,.28);background:radial-gradient(ellipse at 50% 20%,#183a61 0%,#09182b 55%,#050d18 100%);box-shadow:0 18px 60px rgba(0,0,0,.28)}
+#mol3d{width:100%;height:440px;position:relative}
+.viewer-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.viewer-toolbar select,.viewer-toolbar button{border:1px solid rgba(102,184,255,.35);border-radius:10px;padding:10px 13px;background:#10243d;color:#eff7ff}
+.viewer-toolbar button.active{background:#66b8ff;color:#071426}
+.viewer-hint{font-size:12px;opacity:.72}
+.viewer-orb{position:absolute;width:220px;height:220px;border-radius:50%;border:1px solid rgba(102,184,255,.13);right:-70px;top:-90px;pointer-events:none}
+
+
+/* Visual enhancement layer: refined glass panels, vibrant accents and motion. */
+:root{--site-primary:#7cddff;--site-secondary:#0d2038;--site-background:#06101f;--site-on-primary:#06101f;--site-on-secondary:#eef8ff;--site-on-background:#eef8ff;}
+body{background:#030914;color:#eef8ff}
+.app-root{background-color:#06101f;background-image:radial-gradient(ellipse at 8% 2%,rgba(0,217,255,.18),transparent 34%),radial-gradient(ellipse at 90% 12%,rgba(130,92,255,.18),transparent 30%),linear-gradient(180deg,#06101f 0%,#09182b 60%,#050c18 100%)}
+.nav{position:sticky;top:0;z-index:10;background:rgba(5,15,29,.78);backdrop-filter:blur(18px);border-bottom-color:rgba(124,221,255,.18)}
+.logo{background:linear-gradient(135deg,#7cddff,#9e8cff);box-shadow:0 0 30px rgba(124,221,255,.24)}
+.pill{border-color:rgba(124,221,255,.24);background:rgba(124,221,255,.06)}
+.hero{padding-top:clamp(28px,5vw,62px)}
+.eyebrow{color:#8be6ff}
+h1 span{background:linear-gradient(100deg,#7cddff,#b6a1ff 55%,#ff9edb);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.hero-art{background:radial-gradient(ellipse at 50% 40%,rgba(124,221,255,.16),transparent 56%),linear-gradient(145deg,#102a49,#091526);border-color:rgba(124,221,255,.25);box-shadow:0 20px 80px rgba(0,0,0,.28),inset 0 0 40px rgba(124,221,255,.04)}
+.hero-art:after{content:"";position:absolute;inset:12px;border:1px solid rgba(124,221,255,.09);border-radius:20px;pointer-events:none}
+.stat,.card{background:linear-gradient(145deg,rgba(16,42,70,.92),rgba(9,24,42,.9));border-color:rgba(124,221,255,.14);box-shadow:0 14px 36px rgba(0,0,0,.22)}
+.stat strong{background:linear-gradient(90deg,#e9f9ff,#7cddff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{background:linear-gradient(115deg,#7cddff,#9e9aff);box-shadow:0 8px 28px rgba(124,221,255,.2)}
+.btn.secondary{border-color:rgba(124,221,255,.3);background:rgba(124,221,255,.04)}
+.section{scroll-margin-top:90px}
+.mol-card{position:relative;overflow:hidden}
+.mol-card:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,221,255,.06),transparent 55%);pointer-events:none}
+.mol-symbol{background:radial-gradient(circle,rgba(124,221,255,.14),rgba(124,221,255,.025) 70%);border:1px solid rgba(124,221,255,.09)}
+.mol-card:hover{transform:translateY(-6px);box-shadow:0 20px 42px rgba(0,0,0,.3);border-color:rgba(124,221,255,.5)}
+input,select{border-color:rgba(124,221,255,.2);background:#071629}
+input:focus,select:focus{outline:2px solid rgba(124,221,255,.55);outline-offset:1px}
+.prop{background:linear-gradient(145deg,rgba(124,221,255,.09),rgba(124,221,255,.025));border:1px solid rgba(124,221,255,.08)}
+.structure{background:radial-gradient(circle at 50% 45%,rgba(124,221,255,.14),rgba(124,221,255,.025) 68%);border:1px solid rgba(124,221,255,.1)}
+#threeDSection .viewer-shell{border-color:rgba(124,221,255,.32);box-shadow:0 24px 80px rgba(0,0,0,.4),0 0 0 1px rgba(124,221,255,.05);background:radial-gradient(ellipse at 50% 10%,#193b61 0%,#09182b 56%,#030914 100%)}
+.viewer-toolbar button,.viewer-toolbar select{transition:all .18s ease}
+.viewer-toolbar button:hover{border-color:#7cddff;transform:translateY(-1px)}
+footer{border-color:rgba(124,221,255,.15)}
+@keyframes floatGlow{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero-art svg{animation:floatGlow 7s ease-in-out infinite;filter:drop-shadow(0 0 15px rgba(124,221,255,.12))}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+</head>
+<body>
+<div class="app-root">
+<header class="nav">
+  <div class="brand"><div class="logo">⌬</div><div>Molecule Explorer<small>STUDENT CHEMINFORMATICS LAB</small></div></div>
+  <div class="nav-right"><span class="pill">RDKit-inspired learning</span><span class="pill">Dheepthigah · Midnight Blue</span></div>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">Chemistry meets code</div>
+    <h1>Small molecules.<br><span style="color:var(--site-primary)">Big discoveries.</span></h1>
+    <p class="lead">Explore the hidden language of molecules. Enter a SMILES string, inspect a molecular structure, compare calculated properties, and turn chemistry data into a clear story.</p>
+    <div class="row" style="margin-top:24px"><button class="btn" onclick="goTo('analysis')">Explore molecules ↗</button><button class="btn secondary" onclick="goTo('learn')">Learning objectives</button></div>
+  </div>
+  <div class="hero-art" aria-label="Decorative molecule illustration">
+    <svg viewBox="0 0 380 300" role="img" aria-label="Molecular bond illustration">
+      <g stroke="var(--site-primary)" stroke-width="5" opacity=".75">
+        <path d="M190 150 L115 105 L115 195 L190 150 L265 105 L265 195 Z" fill="none"/>
+        <path d="M115 105 L65 70 M115 195 L65 230 M265 105 L315 70 M265 195 L315 230"/>
+      </g>
+      <g fill="var(--site-primary)">
+        <circle cx="190" cy="150" r="27"/><circle cx="115" cy="105" r="19"/><circle cx="115" cy="195" r="19"/>
+        <circle cx="265" cy="105" r="19"/><circle cx="265" cy="195" r="19"/><circle cx="65" cy="70" r="11"/>
+        <circle cx="65" cy="230" r="11"/><circle cx="315" cy="70" r="11"/><circle cx="315" cy="230" r="11"/>
+      </g>
+      <g fill="var(--site-on-background)" font-size="14" font-family="sans-serif" font-weight="700" text-anchor="middle"><text x="190" y="155">C</text><text x="115" y="110">O</text><text x="265" y="110">N</text></g>
+    </svg>
+  </div>
+</section>
+<div class="stat-row">
+  <div class="stat"><strong>10</strong><span>Example compounds</span></div>
+  <div class="stat"><strong>12+</strong><span>Descriptors to explore</span></div>
+  <div class="stat"><strong>2D / 3D</strong><span>Structure views</span></div>
+  <div class="stat"><strong>PDF</strong><span>Personal report layout</span></div>
+</div>
+<section class="section" id="threeDSection">
+  <div class="eyebrow">Molecular dimension · 03</div>
+  <h2>Meet your molecule in 3D</h2>
+  <p class="lead">Explore the shape in a live, rotatable 3D viewer. Drag to rotate, scroll to zoom, and switch between ball-and-stick, space-filling, and wireframe styles.</p>
+  <div class="card">
+    <div class="viewer-toolbar">
+      <label for="mol3dSelect" style="margin:0">Molecule</label>
+      <select id="mol3dSelect" aria-label="Choose molecule">
+        <option>Ethanol</option><option>Phenol</option><option>Benzene</option><option>Aspirin</option><option>Acetone</option><option>Toluene</option><option>Caffeine</option><option>Paracetamol</option><option>Cycloheptane</option><option>3,5-Dimethylhexane</option>
+      </select>
+      <button class="active" id="styleBall" onclick="set3DStyle('ball')">Ball &amp; stick</button>
+      <button id="styleSpace" onclick="set3DStyle('space')">Space filling</button>
+      <button id="styleWire" onclick="set3DStyle('wire')">Wireframe</button>
+      <button onclick="reset3DView()">Reset view ↻</button>
+    </div>
+    <div class="viewer-shell"><div class="viewer-orb"></div><div id="mol3d" role="img" aria-label="Interactive rotatable 3D molecular model"></div></div>
+    <div class="row" style="justify-content:space-between;margin-top:12px">
+      <span class="viewer-hint" id="mol3dStatus">Loading 3D molecular viewer…</span>
+      <span class="formula" id="mol3dFormula">CCO</span>
+    </div>
+    <p class="viewer-hint">3D conformers are retrieved from PubChem when available. An internet connection is required for the 3D viewer. The other explorer sections remain available offline.</p>
+  </div>
+</section>
+<section class="section" id="learn">
+  <div class="eyebrow">Start here</div><h2>What you'll learn</h2>
+  <div class="cards">
+    <article class="card"><h3>01 · Read SMILES</h3><p class="muted">Learn how a compact text string encodes atoms, bonds, branches, and rings.</p></article>
+    <article class="card"><h3>02 · Inspect shape</h3><p class="muted">Connect a molecule's 2D drawing to a generated 3D conformer.</p></article>
+    <article class="card"><h3>03 · Compare properties</h3><p class="muted">Explore formula, mass, LogP, TPSA, hydrogen bonding, rings, and flexibility.</p></article>
+    <article class="card"><h3>04 · Explain results</h3><p class="muted">Use graphs and cautious scientific interpretations to communicate findings.</p></article>
+  </div>
+</section>
+<section class="section">
+  <div class="eyebrow">The starter library</div><h2>Meet the molecules</h2>
+  <div class="cards" id="moleculeCards"></div>
+</section>
+<section class="section" id="analysis">
+  <div class="eyebrow">Interactive lab</div><h2>Analyze a molecule</h2>
+  <p class="muted">Choose an example or enter a SMILES string. This preview provides a self-contained learning demonstration; the full Python/RDKit project performs authoritative structure parsing and calculations.</p>
+  <div class="workspace">
+    <div class="card">
+      <label for="compound">Example compound</label>
+      <select id="compound"><option>Ethanol</option><option>Phenol</option><option>Benzene</option><option>Aspirin</option><option>Acetone</option><option>Toluene</option><option>Caffeine</option><option>Paracetamol</option><option>Cycloheptane</option><option>3,5-Dimethylhexane</option></select>
+      <label for="smiles">SMILES notation</label><input id="smiles" value="CCO" spellcheck="false">
+      <div class="row" style="margin-top:14px"><button class="btn" id="analyze">Analyze molecule</button><button class="btn secondary" id="reset">Reset</button></div>
+      <div id="validation" class="status ok">Example selected. Check the SMILES to continue.</div>
+      <div class="note" style="margin-top:18px">SMILES stands for Simplified Molecular Input Line Entry System. The full Streamlit project uses RDKit for validation and descriptor calculations.</div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h3 id="molTitle">Ethanol</h3><span class="formula" id="formula">C₂H₆O</span></div>
+      <div class="structure" id="structure"></div>
+      <p class="muted" id="description"></p>
+      <div class="prop-grid" id="properties"></div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="eyebrow">Compare & interpret</div><h2>Structure–property comparison</h2>
+  <div class="card">
+    <label for="metric">Descriptor to compare</label>
+    <select id="metric"><option value="mw">Molecular weight (g/mol)</option><option value="logp">LogP (estimate)</option><option value="tpsa">TPSA (Å²)</option><option value="donors">Hydrogen bond donors</option><option value="acceptors">Hydrogen bond acceptors</option><option value="rot">Rotatable bonds</option><option value="rings">Ring count</option><option value="atoms">Heavy atom count</option><option value="bonds">Bond count</option></select>
+    <div class="bar-chart" id="chart" style="margin-top:20px"></div>
+    <div class="note" id="interpretation" style="margin-top:22px"></div>
+  </div>
+</section>
+<section class="section">
+  <div class="eyebrow">All compounds at a glance</div><h2>Property table</h2>
+  <div class="card table-wrap"><table><thead><tr><th>Compound</th><th>Formula</th><th>MW</th><th>LogP</th><th>TPSA</th><th>HBD / HBA</th><th>Rings</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+</section>
+<section class="section" id="report">
+  <div class="eyebrow">Take your work with you</div><h2>Build your report</h2>
+  <div class="card">
+    <p class="muted">Enter student details to prepare a print-ready analysis summary. Use your browser's Print → Save as PDF option to save it.</p>
+    <div class="report-fields">
+      <div><label for="student">Student name</label><input id="student" value="Dheepthigah"></div>
+      <div><label for="classInfo">Class / team</label><input id="classInfo" placeholder="e.g. Chemistry project team"></div>
+      <div><label for="reportCompound">Compound</label><select id="reportCompound"><option>Ethanol</option><option>Phenol</option><option>Benzene</option><option>Aspirin</option><option>Acetone</option><option>Toluene</option><option>Caffeine</option><option>Paracetamol</option><option>Cycloheptane</option><option>3,5-Dimethylhexane</option></select></div>
+      <div><label for="inputSmiles">Input SMILES</label><input id="inputSmiles" value="CCO"></div>
+    </div>
+    <div class="row" style="margin-top:18px"><button class="btn" onclick="prepareReport()">Prepare report</button><button class="btn secondary" onclick="window.print()">Print / Save as PDF</button></div>
+    <div id="reportPreview" class="note" style="margin-top:18px">Your report preview will appear here.</div>
+  </div>
+</section>
+<section class="section">
+  <div class="note"><strong>Scientific note:</strong> values shown in this self-contained website preview are illustrative reference descriptors. The Python/RDKit app in the downloadable project is intended for actual SMILES parsing and recalculation. LogP is an estimate; computed descriptors alone do not establish toxicity, safety, or biological activity.</div>
+</section>
+</main>
+<footer><span>MOLECULE EXPLORER · STUDENT PROJECT</span><span>Theme by Dheepthigah · Midnight Blue</span></footer>
+<div class="watermark">MOLECULE EXPLORER · Dheepthigah</div>
+</div>
+<script>
+const compounds = {"Ethanol": {"smiles": "CCO", "formula": "C₂H₆O", "mw": 46.069, "exact": 46.0419, "logp": -0.001, "tpsa": 20.23, "donors": 1, "acceptors": 1, "rot": 0, "rings": 0, "atoms": 3, "bonds": 2, "description": "A small alcohol used as a solvent and found in alcoholic beverages."}, "Phenol": {"smiles": "Oc1ccccc1", "formula": "C₆H₆O", "mw": 94.113, "exact": 94.0419, "logp": 1.392, "tpsa": 20.23, "donors": 1, "acceptors": 1, "rot": 0, "rings": 1, "atoms": 7, "bonds": 7, "description": "An aromatic molecule with a hydroxyl group attached directly to the ring."}, "Benzene": {"smiles": "c1ccccc1", "formula": "C₆H₆", "mw": 78.114, "exact": 78.047, "logp": 1.686, "tpsa": 0.0, "donors": 0, "acceptors": 0, "rot": 0, "rings": 1, "atoms": 6, "bonds": 6, "description": "A six-carbon aromatic ring and an important industrial chemical."}, "Aspirin": {"smiles": "CC(=O)Oc1ccccc1C(=O)O", "formula": "C₉H₈O₄", "mw": 180.159, "exact": 180.0423, "logp": 1.31, "tpsa": 63.6, "donors": 1, "acceptors": 4, "rot": 2, "rings": 1, "atoms": 13, "bonds": 13, "description": "An aromatic compound containing ester and carboxylic acid groups; commonly known as a pain-relief medicine."}, "Acetone": {"smiles": "CC(=O)C", "formula": "C₃H₆O", "mw": 58.080, "exact": 58.0419, "logp": 0.355, "tpsa": 17.07, "donors": 0, "acceptors": 1, "rot": 0, "rings": 0, "atoms": 4, "bonds": 3, "description": "A simple ketone widely used as a solvent; its carbonyl group gives it distinctive polarity."}, "Toluene": {"smiles": "Cc1ccccc1", "formula": "C₇H₈", "mw": 92.141, "exact": 92.0626, "logp": 2.73, "tpsa": 0.0, "donors": 0, "acceptors": 0, "rot": 0, "rings": 1, "atoms": 7, "bonds": 7, "description": "An aromatic hydrocarbon consisting of a benzene ring with a methyl group; commonly used as an industrial solvent."}, "Caffeine": {"smiles": "Cn1c(=O)c2c(ncn2C)n(C)c1=O", "formula": "C₈H₁₀N₄O₂", "mw": 194.194, "exact": 194.0804, "logp": -0.07, "tpsa": 61.82, "donors": 0, "acceptors": 6, "rot": 0, "rings": 2, "atoms": 14, "bonds": 14, "description": "A naturally occurring stimulant found in coffee and tea, featuring a fused ring system and several nitrogen and oxygen atoms."}};
+compounds["Paracetamol"] = {smiles:"CC(=O)Nc1ccc(O)cc1",formula:"C₈H₉NO₂",mw:151.163,exact:151.0633,logp:0.46,tpsa:49.33,donors:2,acceptors:2,rot:1,rings:1,atoms:11,bonds:11,description:"Also called acetaminophen, paracetamol contains an aromatic ring, a hydroxyl group, and an amide group."};
+compounds["Cycloheptane"] = {smiles:"C1CCCCCC1",formula:"C₇H₁₄",mw:98.189,exact:98.1096,logp:2.96,tpsa:0,donors:0,acceptors:0,rot:0,rings:1,atoms:7,bonds:7,description:"A saturated seven-membered carbon ring; its ring structure restricts the molecule's overall connectivity."};
+compounds["3,5-Dimethylhexane"] = {smiles:"CCC(C)CC(C)C",formula:"C₈H₁₈",mw:114.232,exact:114.1409,logp:3.45,tpsa:0,donors:0,acceptors:0,rot:5,rings:0,atoms:8,bonds:7,description:"A branched alkane with an eight-carbon skeleton and methyl branches at positions 3 and 5 of the parent hexane chain."};
+const themeAccent = "#66B8FF";
+const sketches = {
+Ethanol: `<svg viewBox="0 0 220 130" aria-label="Stylized ethanol structure"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M45 72 L100 42 L153 72"/></g><g fill="var(--site-primary)"><circle cx="45" cy="72" r="17"/><circle cx="100" cy="42" r="17"/><circle cx="153" cy="72" r="17"/></g><g fill="var(--site-on-primary)" text-anchor="middle" font-size="13" font-weight="700"><text x="45" y="76">C</text><text x="100" y="46">C</text><text x="153" y="76">O</text></g></svg>`,
+Phenol: `<svg viewBox="0 0 220 130" aria-label="Stylized phenol structure"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M80 25 L120 25 L143 60 L120 95 L80 95 L57 60 Z M80 33 L113 33 M134 60 L117 87 M64 60 L83 87 M143 60 L176 60"/></g><g fill="var(--site-primary)"><circle cx="80" cy="25" r="5"/><circle cx="120" cy="25" r="5"/><circle cx="143" cy="60" r="5"/><circle cx="120" cy="95" r="5"/><circle cx="80" cy="95" r="5"/><circle cx="57" cy="60" r="5"/><circle cx="184" cy="60" r="13"/></g><text x="184" y="64" text-anchor="middle" fill="var(--site-on-primary)" font-size="11" font-weight="700">OH</text></svg>`,
+Benzene: `<svg viewBox="0 0 220 130" aria-label="Stylized benzene ring"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M80 25 L120 25 L143 60 L120 95 L80 95 L57 60 Z M84 34 L115 34 M132 60 L115 86 M67 60 L85 86"/></g><g fill="var(--site-primary)"><circle cx="80" cy="25" r="5"/><circle cx="120" cy="25" r="5"/><circle cx="143" cy="60" r="5"/><circle cx="120" cy="95" r="5"/><circle cx="80" cy="95" r="5"/><circle cx="57" cy="60" r="5"/></g></svg>`,
+Acetone: `<svg viewBox="0 0 220 130" aria-label="Acetone 2D structure"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M45 72 L105 72 M105 72 L165 72 M105 72 L105 35 M110 72 L110 35"/></g><g fill="var(--site-primary)" font-size="13" font-weight="700"><text x="22" y="77">CH₃</text><text x="146" y="77">CH₃</text><text x="96" y="25">O</text></g></svg>`,
+Toluene: `<svg viewBox="0 0 220 130" aria-label="Toluene 2D structure"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M80 25 L120 25 L143 60 L120 95 L80 95 L57 60 Z M84 34 L115 34 M132 60 L115 86 M67 60 L85 86 M57 60 L25 60"/></g><g fill="var(--site-primary)" font-size="12" font-weight="700"><text x="2" y="64">CH₃</text></g></svg>`,
+Caffeine: `<svg viewBox="0 0 220 130" aria-label="Caffeine 2D structure"><g stroke="var(--site-primary)" stroke-width="2.7" fill="none"><path d="M65 34 L96 20 L122 38 L116 69 L84 80 L59 62 Z M122 38 L153 24 L179 43 L173 74 L143 85 L116 69 M74 39 L94 29 M88 71 L110 64 M148 31 L169 43 M147 78 L169 68 M65 34 L35 18 M84 80 L74 108 M153 24 L160 8"/></g><g fill="var(--site-primary)" font-size="11" font-weight="700"><text x="89" y="16">O</text><text x="174" y="39">O</text><text x="20" y="18">CH₃</text><text x="54" y="119">CH₃</text><text x="154" y="8">CH₃</text><text x="65" y="57">N</text><text x="108" y="55">N</text><text x="145" y="63">N</text><text x="91" y="91">N</text></g></svg>`,
+Aspirin: `<svg viewBox="0 0 220 130" aria-label="Stylized aspirin structure"><g stroke="var(--site-primary)" stroke-width="2.5" fill="none"><path d="M65 28 L99 28 L118 58 L99 88 L65 88 L46 58 Z M70 36 L94 36 M108 58 L94 80 M53 58 L68 80 M118 58 L145 44 M99 88 L124 103 M145 44 L170 44 M124 103 L150 103"/></g><g fill="var(--site-primary)"><circle cx="65" cy="28" r="4"/><circle cx="99" cy="28" r="4"/><circle cx="118" cy="58" r="4"/><circle cx="99" cy="88" r="4"/><circle cx="65" cy="88" r="4"/><circle cx="46" cy="58" r="4"/></g><g fill="var(--site-primary)" font-size="10" font-weight="700"><text x="167" y="36">COOH</text><text x="148" y="96">OCOCH₃</text></g></svg>`
+};
+sketches.Paracetamol = `<svg viewBox="0 0 220 130" aria-label="Stylized paracetamol structure"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M75 25 L115 25 L138 60 L115 95 L75 95 L52 60 Z M80 34 L110 34 M129 60 L110 86 M61 60 L80 86 M138 60 L168 60 M75 25 L43 12"/></g><g fill="var(--site-primary)"><circle cx="75" cy="25" r="5"/><circle cx="115" cy="25" r="5"/><circle cx="138" cy="60" r="5"/><circle cx="115" cy="95" r="5"/><circle cx="75" cy="95" r="5"/><circle cx="52" cy="60" r="5"/></g><g fill="var(--site-primary)" font-size="10" font-weight="700"><text x="164" y="55">NHCOCH₃</text><text x="12" y="14">OH</text></g></svg>`;
+sketches.Cycloheptane = `<svg viewBox="0 0 220 130" aria-label="Stylized cycloheptane ring"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M110 18 L151 35 L169 70 L147 103 L110 115 L73 103 L51 70 L69 35 Z"/></g><g fill="var(--site-primary)"><circle cx="110" cy="18" r="5"/><circle cx="151" cy="35" r="5"/><circle cx="169" cy="70" r="5"/><circle cx="147" cy="103" r="5"/><circle cx="110" cy="115" r="5"/><circle cx="73" cy="103" r="5"/><circle cx="51" cy="70" r="5"/><circle cx="69" cy="35" r="5"/></g></svg>`;
+sketches["3,5-Dimethylhexane"] = `<svg viewBox="0 0 220 130" aria-label="Stylized 3,5-dimethylhexane structure"><g stroke="var(--site-primary)" stroke-width="3" fill="none"><path d="M24 78 L59 48 L94 78 L129 48 L164 78 L199 48 M59 48 L59 14 M164 78 L164 112"/></g><g fill="var(--site-primary)"><circle cx="24" cy="78" r="5"/><circle cx="59" cy="48" r="5"/><circle cx="94" cy="78" r="5"/><circle cx="129" cy="48" r="5"/><circle cx="164" cy="78" r="5"/><circle cx="199" cy="48" r="5"/><circle cx="59" cy="14" r="5"/><circle cx="164" cy="112" r="5"/></g></svg>`;
+const descriptors = [
+["Molecular weight","mw","g/mol"],["Exact molecular weight","exact","g/mol"],["LogP","logp",""],["TPSA","tpsa","Å²"],
+["H-bond donors","donors",""],["H-bond acceptors","acceptors",""],["Rotatable bonds","rot",""],["Ring count","rings",""],
+["Heavy atoms","atoms",""],["Bond count","bonds",""]
+];
+function fmt(key,v){ if(["mw","exact","logp","tpsa"].includes(key)) return Number(v).toFixed(key==="exact"?5:3); return v; }
+function setCompound(name) {
+ const c=compounds[name]; document.getElementById("compound").value=name;
+ document.getElementById("smiles").value=c.smiles; document.getElementById("molTitle").textContent=name;
+ document.getElementById("formula").textContent=c.formula; document.getElementById("description").textContent=c.description;
+ document.getElementById("structure").innerHTML=sketches[name] || `<div class="muted">2D sketch unavailable for ${escapeHtml(name)}</div>`;
+ document.getElementById("properties").innerHTML=descriptors.map(([label,key,unit])=>`<div class="prop"><small>${label}</small><strong>${fmt(key,c[key])}</strong><small>${unit}</small></div>`).join("");
+ document.getElementById("validation").textContent="Example structure selected. Reference SMILES: "+c.smiles;
+ document.getElementById("validation").className="status ok";
+ document.getElementById("reportCompound").value=name; document.getElementById("inputSmiles").value=c.smiles;
+ drawChart(); updateTable();
+}
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:"smooth"});}
+function drawChart(){
+ const key=document.getElementById("metric").value;
+ const labels={mw:"Molecular weight",logp:"LogP",tpsa:"TPSA",donors:"H-bond donors",acceptors:"H-bond acceptors",rot:"Rotatable bonds",rings:"Ring count",atoms:"Heavy atoms",bonds:"Bond count"};
+ const vals=Object.values(compounds).map(c=>c[key]); const min=Math.min(0,...vals), max=Math.max(...vals,1);
+ document.getElementById("chart").innerHTML=Object.entries(compounds).map(([name,c])=>{const v=c[key], w=Math.max(1,(v-min)/(max-min)*100);return `<div class="bar-row"><span>${name}</span><div class="track"><div class="fill" style="width:${w}%"></div></div><strong>${fmt(key,v)}</strong></div>`}).join("");
+ let text="";
+ if(key==="logp") text="LogP estimates lipophilicity. Higher values generally indicate greater preference for a non-water-like environment; this is not a direct solubility measurement.";
+ else if(key==="tpsa") text="TPSA estimates polar surface area. Polar groups can affect hydrogen bonding, solubility, and membrane permeability.";
+ else if(key==="donors"||key==="acceptors") text="Hydrogen-bond donor and acceptor counts describe possible interaction sites. They are structural descriptors, not a complete model of real molecular interactions.";
+ else if(key==="rot") text="Rotatable bonds offer a rough flexibility indicator. Ring systems and bond types affect how freely a molecule can change shape.";
+ else if(key==="rings") text="Ring counts help describe cyclic structure. A ring can constrain molecular geometry, but ring count alone does not predict reactivity.";
+ else text="Molecular size descriptors help compare compounds. Larger mass or atom count alone does not tell you whether a molecule is safe, soluble, or biologically active.";
+ document.getElementById("interpretation").innerHTML=`<strong>${labels[key]} — how to read this</strong><br>${text}`;
+}
+function updateTable(){
+ document.getElementById("tableBody").innerHTML=Object.entries(compounds).map(([n,c])=>`<tr><td><strong>${n}</strong></td><td>${c.formula}</td><td>${c.mw.toFixed(3)}</td><td>${c.logp.toFixed(3)}</td><td>${c.tpsa.toFixed(2)}</td><td>${c.donors} / ${c.acceptors}</td><td>${c.rings}</td></tr>`).join("");
+}
+function validateInput(){
+ const name=document.getElementById("compound").value, s=document.getElementById("smiles").value.trim();
+ const status=document.getElementById("validation");
+ if(Object.values(compounds).some(c=>c.smiles===s)){
+   const found=Object.keys(compounds).find(n=>compounds[n].smiles===s); setCompound(found);
+ } else {
+   status.textContent=s ? "Custom SMILES entered. Full chemical validation requires the RDKit-powered Python app." : "Please enter a SMILES string.";
+   status.className="status "+(s?"bad":"bad");
+ }
+}
+function prepareReport(){
+ const name=document.getElementById("reportCompound").value, c=compounds[name];
+ const student=document.getElementById("student").value.trim()||"Not provided";
+ const cls=document.getElementById("classInfo").value.trim()||"Not provided";
+ const smiles=document.getElementById("inputSmiles").value.trim();
+ document.getElementById("reportPreview").innerHTML=`<strong>Molecular Analysis Report</strong><br>Student: ${escapeHtml(student)} · Class/team: ${escapeHtml(cls)}<br>Compound: ${name} · Formula: ${c.formula}<br>Input SMILES: <code>${escapeHtml(smiles)}</code><br>Canonical reference SMILES: <code>${c.smiles}</code><br>Molecular weight: ${c.mw.toFixed(3)} g/mol · LogP: ${c.logp.toFixed(3)} · TPSA: ${c.tpsa.toFixed(2)} Å²<br><br><strong>Conclusion:</strong> ${c.description} The descriptors provide a starting point for comparing structure and properties; they do not replace experimental data.`;
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
+document.getElementById("moleculeCards").innerHTML=Object.entries(compounds).map(([n,c])=>`<article class="card mol-card" onclick="setCompound('${n}');goTo('analysis')"><div class="mol-symbol">${sketches[n]}</div><h3>${n}</h3><span class="formula">${c.formula}</span><p>${c.description}</p><span class="muted">MW ${c.mw.toFixed(3)} g/mol · LogP ${c.logp.toFixed(2)}</span></article>`).join("");
+document.getElementById("compound").addEventListener("change",e=>setCompound(e.target.value));
+document.getElementById("analyze").addEventListener("click",validateInput);
+document.getElementById("reset").addEventListener("click",()=>setCompound("Ethanol"));
+document.getElementById("metric").addEventListener("change",drawChart);
+setCompound("Ethanol"); drawChart(); updateTable(); prepareReport();
+</script>
+
+<!-- Interactive 3D molecular viewer (3Dmol.js) -->
+<script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+<script>
+let viewer3d=null, model3dStyle='ball', current3dName='Ethanol';
+const pubchemNames={'3,5-Dimethylhexane':'3,5-dimethylhexane'};
+function init3DViewer(){
+ const el=document.getElementById('mol3d');
+ if(!el)return;
+ if(!window.$3Dmol){document.getElementById('mol3dStatus').textContent='Viewer library unavailable. Check your internet connection.';return;}
+ viewer3d=$3Dmol.createViewer(el,{backgroundColor:'0x071426',antialias:true});
+ load3DMolecule(document.getElementById('mol3dSelect').value);
+ document.getElementById('mol3dSelect').addEventListener('change',e=>load3DMolecule(e.target.value));
+}
+async function load3DMolecule(name){
+ current3dName=name;
+ const c=compounds[name];
+ document.getElementById('mol3dStatus').textContent='Fetching 3D conformer…';
+ document.getElementById('mol3dFormula').textContent=c.smiles;
+ viewer3d.removeAllModels();
+ try{
+   const queryName=encodeURIComponent(pubchemNames[name]||name);
+   const url='https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/'+queryName+'/SDF?record_type=3d';
+   const res=await fetch(url);
+   if(!res.ok) throw new Error('3D conformer unavailable');
+   const sdf=await res.text();
+   viewer3d.addModel(sdf,'sdf');
+   apply3DStyle();viewer3d.zoomTo();viewer3d.zoom(0.9);viewer3d.render();
+   document.getElementById('mol3dStatus').textContent=name+' · interactive 3D conformer loaded';
+ }catch(err){
+   if(viewer3d){viewer3d.removeAllModels();viewer3d.render();}
+   document.getElementById('mol3dStatus').textContent='3D conformer unavailable for '+name+'. The explorer is still usable; check your internet connection and try again.';
+ }
+}
+function set3DStyle(style){
+ model3dStyle=style;
+ ['styleBall','styleSpace','styleWire'].forEach(id=>document.getElementById(id).classList.remove('active'));
+ document.getElementById(style==='ball'?'styleBall':style==='space'?'styleSpace':'styleWire').classList.add('active');
+ apply3DStyle();
+}
+function apply3DStyle(){
+ if(!viewer3d||!viewer3d.getModel())return;
+ viewer3d.setStyle({},{});
+ if(model3dStyle==='ball')viewer3d.setStyle({},{stick:{radius:.16},sphere:{scale:.28}});
+ if(model3dStyle==='space')viewer3d.setStyle({},{sphere:{scale:1.0}});
+ if(model3dStyle==='wire')viewer3d.setStyle({},{line:{linewidth:2}});
+ viewer3d.render();
+}
+function reset3DView(){if(viewer3d){viewer3d.zoomTo();viewer3d.zoom(0.9);viewer3d.rotate(0,1,0);viewer3d.render();}}
+window.addEventListener('load',()=>setTimeout(init3DViewer,120));
+window.addEventListener('resize',()=>{if(viewer3d)viewer3d.resize();});
+</script>
+
+</body>
+</html>
